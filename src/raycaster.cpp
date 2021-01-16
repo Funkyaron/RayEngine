@@ -39,9 +39,9 @@ int main() {
     std::cout << "P3\n" << nx << " " << ny << "\n255\n";
 
     hitable* list[2];
-    list[0] = new sphere(vec3(0,0,-1),0.5);
-    //list[1] = new sphere(vec3(0,-100.5,-1),100);
-    list[1] = new triangle(vec3(0.4, -0.2, -1.5), vec3(0.0, -0.1, -2.5), vec3(-0.4, -0.4, -1.5));
+    //list[0] = new sphere(vec3(0,0,-1),0.5);
+    list[0] = new triangle(vec3(0.0, -0.5, -1.5), vec3(0.5, 0.5, -1), vec3(-0.4, 0.4, -0.5));
+    list[1] = new sphere(vec3(0,-100.5,-1),100);
     hitable* world = new hitable_list(list,2);
 
     camera cam;
