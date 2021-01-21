@@ -3,12 +3,14 @@
 #include "hitable_list.h"
 #include "triangle.h"
 #include "camera.h"
+#include "lambert.h"
+#include "metal.h"
 #include <cfloat>
 #include <stdlib.h>
 //#include <cstdlib>
 
 //float r = static_cast <float> (std::rand() % RAND_MAX) / static_cast <float> (RAND_MAX);
-float get_random_number() {
+/*float get_random_number() {
     return float(std::rand() % RAND_MAX) / float(RAND_MAX);
 }
 
@@ -18,13 +20,18 @@ vec3 random_in_unit_sphere() {
         p = 2.0 * vec3(get_random_number(), get_random_number(), get_random_number()) - vec3(1,1,1);
     } while (p.squared_length() >= 1.0);
     return p;
-}
+}*/
 
-vec3 color(const ray& r, hitable* world) {
+vec3 color(const ray& r, hitable* world, int depth) {
     hit_record rec;
     if(world->hit(r, 0.001, FLT_MAX, rec)) {
-        vec3 target = rec.p + rec.normal + random_in_unit_sphere();
-        return vec3(0.8,0.6,0.1) * color(ray(rec.p, target - rec.p), world);
+        ray scattered;
+        vec3 attenuation;
+        if(depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered)) {
+            return attenuation * color(scattered, world, depth + 1);
+        } else {
+            return vec3(0,0,0);
+        }
     } else {
         vec3 unit_direction = unit_vector(r.direction());
         float t = 0.5 * (unit_direction.y() + 1.0);
@@ -38,11 +45,15 @@ int main() {
     int ns = 100;
     std::cout << "P3\n" << nx << " " << ny << "\n255\n";
 
-    hitable* list[2];
+    hitable* list[4];
     //list[0] = new sphere(vec3(0,0,-1),0.5);
-    list[0] = new triangle(vec3(0.0, -0.5, -1.5), vec3(0.5, 0.5, -1), vec3(-0.4, 0.4, -0.5));
-    list[1] = new sphere(vec3(0,-100.5,-1),100);
-    hitable* world = new hitable_list(list,2);
+    //list[0] = new triangle(vec3(0.0, -0.5, -1.5), vec3(0.5, 0.5, -1), vec3(-0.4, 0.4, -0.5));
+    //list[1] = new sphere(vec3(0,-100.5,-1),100);
+    list[0] = new sphere(vec3(0,0,-1), 0.5, new lambert(vec3(0.8,0.3,0.3)));
+    list[1] = new sphere(vec3(0,-100.5,-1), 100, new lambert(vec3(0.8,0.8,0.0)));
+    list[2] = new sphere(vec3(1,0,-1), 0.5, new metal(vec3(0.8,0.6,0.2)));
+    list[3] = new sphere(vec3(-1,0,-1), 0.5, new metal(vec3(0.8,0.8,0.8)));
+    hitable* world = new hitable_list(list,4);
 
     camera cam;
 
@@ -54,7 +65,7 @@ int main() {
                 float v = float(j + get_random_number()) / float(ny);
                 ray r = cam.get_ray(u, v);
                 vec3 p = r.point_at_parameter(2.0);
-                col += color(r, world);
+                col += color(r, world, 0);
             }
             col /= float(ns);
             // Gamma correction

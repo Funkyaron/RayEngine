@@ -8,12 +8,14 @@ class triangle: public hitable {
     vec3 p1;
     vec3 p2;
     vec3 p3;
+    material* mat_ptr;
 
     triangle() {}
-    triangle(vec3 _p1, vec3 _p2, vec3 _p3) {
+    triangle(vec3 _p1, vec3 _p2, vec3 _p3, material* _mat) {
         p1 = _p1;
         p2 = _p2;
         p3 = _p3;
+        mat_ptr = _mat;
         normal = unit_vector(cross(p2 - p1, p3 - p1));
     }
     virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const;
@@ -37,6 +39,7 @@ bool triangle::hit(const ray& r, float t_min, float t_max, hit_record& rec) cons
             rec.t = t;
             rec.p = r.point_at_parameter(t);
             rec.normal = normal;
+            rec.mat_ptr = mat_ptr;
             return true;
         }
     }
