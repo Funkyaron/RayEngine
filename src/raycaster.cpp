@@ -5,22 +5,9 @@
 #include "camera.h"
 #include "lambert.h"
 #include "metal.h"
+#include "dielectric.h"
 #include <cfloat>
 #include <stdlib.h>
-//#include <cstdlib>
-
-//float r = static_cast <float> (std::rand() % RAND_MAX) / static_cast <float> (RAND_MAX);
-/*float get_random_number() {
-    return float(std::rand() % RAND_MAX) / float(RAND_MAX);
-}
-
-vec3 random_in_unit_sphere() {
-    vec3 p;
-    do {
-        p = 2.0 * vec3(get_random_number(), get_random_number(), get_random_number()) - vec3(1,1,1);
-    } while (p.squared_length() >= 1.0);
-    return p;
-}*/
 
 vec3 color(const ray& r, hitable* world, int depth) {
     hit_record rec;
@@ -49,10 +36,10 @@ int main() {
     //list[0] = new sphere(vec3(0,0,-1),0.5);
     //list[0] = new triangle(vec3(0.0, -0.5, -1.5), vec3(0.5, 0.5, -1), vec3(-0.4, 0.4, -0.5));
     //list[1] = new sphere(vec3(0,-100.5,-1),100);
-    list[0] = new sphere(vec3(0,0,-1), 0.5, new lambert(vec3(0.8,0.3,0.3)));
+    list[0] = new sphere(vec3(-0.7,0,-2.1), 0.5, new lambert(vec3(0.1,0.2,0.5)));
     list[1] = new sphere(vec3(0,-100.5,-1), 100, new lambert(vec3(0.8,0.8,0.0)));
-    list[2] = new sphere(vec3(1,0,-1), 0.5, new metal(vec3(0.8,0.6,0.2)));
-    list[3] = new sphere(vec3(-1,0,-1), 0.5, new metal(vec3(0.8,0.8,0.8)));
+    list[2] = new sphere(vec3(0.8,0,-1.3), 0.5, new metal(vec3(0.8,0.8,0.8), 0.1));
+    list[3] = new sphere(vec3(-0.7,0,-1.0), 0.5, new dielectric(1.5));
     hitable* world = new hitable_list(list,4);
 
     camera cam;
