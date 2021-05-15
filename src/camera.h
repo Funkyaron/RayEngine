@@ -1,7 +1,7 @@
 #ifndef CAMERAH
 #define CAMERAH
 
-#include "material.h"
+#include "material/material.h"
 #include "util.h"
 
 

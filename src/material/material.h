@@ -1,8 +1,8 @@
 #ifndef MATERIALH
 #define MATERIALH
 
-#include "hitable.h"
-#include "util.h"
+#include "../geometry/hitable.h"
+#include "../util.h"
 
 
 
